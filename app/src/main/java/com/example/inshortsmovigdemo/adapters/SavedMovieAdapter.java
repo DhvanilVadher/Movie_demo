@@ -57,9 +57,11 @@ public class SavedMovieAdapter extends RecyclerView.Adapter<SavedMovieViewHolder
         holder.releasedate.setText(mMovies.get(position).getRelease_date());
         holder.rating.setText("Rating : " + mMovies.get(position).getVote_average());
         holder.description.setText(mMovies.get(position).getMovie_overview());
-        Glide.with(holder.itemView.getContext())
-                .load(Credentials.FIXED_IMAGE_URL+mMovies.get(position).getPoster_path())
-                .into((holder).poster );
+        if(mMovies.get(position).getPoster_path()!=null) {
+            Glide.with(holder.itemView.getContext())
+                    .load(Credentials.FIXED_IMAGE_URL + mMovies.get(position).getPoster_path())
+                    .into((holder).poster);
+        }
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
