@@ -2,8 +2,7 @@
 <pre>
 Android Application using TMDB api for Movies.
 
-Link:
-https://drive.google.com/file/d/1llOs4JGI3W7MM-J4G9urrAUXI1H-fyGc/view?usp=sharing
+Link:https://drive.google.com/file/d/1POUztpgJfMX9s7SSlWJlqtj-0GlW24vw/view?usp=sharing
 
 Features:
   Loading popular and latest movies with description and rating.
