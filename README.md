@@ -1,4 +1,5 @@
 # Movie_demo
+<pre>
 Android Application using TMDB api for Movies.
 
 Features:
@@ -21,3 +22,4 @@ Permission
   Internet
   
 ScreenShots
+</pre>
