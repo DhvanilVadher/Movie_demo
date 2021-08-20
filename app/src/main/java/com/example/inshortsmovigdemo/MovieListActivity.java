@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,15 +15,13 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bumptech.glide.RequestManager;
 import com.example.inshortsmovigdemo.adapters.MovieRecyclerView;
 import com.example.inshortsmovigdemo.adapters.OnMovieListener;
-import com.example.inshortsmovigdemo.depedency.AuthViewModel;
-import com.example.inshortsmovigdemo.depedency.ViewModelProviderFactory;
 import com.example.inshortsmovigdemo.models.MovieModel;
 import com.example.inshortsmovigdemo.models.MovieWrapperPlaying;
 import com.example.inshortsmovigdemo.models.MovieWrapperPopular;
@@ -46,7 +43,7 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
     private MovieRecyclerView movieRecyclerAdapter,movieRecyclerAdapterPopular,movieRecyclerAdapterPlayingNow;
     private TextView playingNow,popularMovie;
     private Button SavedMoviesBtn;
-
+    SearchView searchView;
     private static  final String TAG = "ListActivity";
 
 
@@ -68,12 +65,9 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
         playingNow = findViewById(R.id.txt_playing_now);
         popularMovie = findViewById(R.id.txt_pop_movie);
         SavedMoviesBtn = findViewById(R.id.SavedMovieButton);
-        SavedMoviesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),SavedMovies.class);
-                startActivity(intent);
-            }
+        SavedMoviesBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(),SavedMovies.class);
+            startActivity(intent);
         });
 
         movieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
@@ -99,25 +93,19 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
     }
 
     private void OfflineObserver() {
-        movieViewModelPopular.getAllMovies().observe(this, new Observer<List<MovieWrapperPopular>>() {
-            @Override
-            public void onChanged(List<MovieWrapperPopular> movieWrapperPopulars) {
-                List<MovieModel> mm = new ArrayList<>();
-                for(MovieWrapperPopular i: movieWrapperPopulars){
-                    mm.add(i.getMovieModel());
-                }
-                movieRecyclerAdapterPopular.setmMovies(mm);
+        movieViewModelPopular.getAllMovies().observe(this, movieWrapperPopulars -> {
+            List<MovieModel> mm = new ArrayList<>();
+            for(MovieWrapperPopular i: movieWrapperPopulars){
+                mm.add(i.getMovieModel());
             }
+            movieRecyclerAdapterPopular.setmMovies(mm);
         });
-        movieViewModelPlaying.getAllMovies().observe(this, new Observer<List<MovieWrapperPlaying>>() {
-            @Override
-            public void onChanged(List<MovieWrapperPlaying> movieWrapperPlayings) {
-                List<MovieModel> mm = new ArrayList<>();
-                for(MovieWrapperPlaying i: movieWrapperPlayings){
-                    mm.add(i.getMovieModel());
-                }
-                movieRecyclerAdapterPlayingNow.setmMovies(mm);
+        movieViewModelPlaying.getAllMovies().observe(this, movieWrapperPlayings -> {
+            List<MovieModel> mm = new ArrayList<>();
+            for(MovieWrapperPlaying i: movieWrapperPlayings){
+                mm.add(i.getMovieModel());
             }
+            movieRecyclerAdapterPlayingNow.setmMovies(mm);
         });
     }
 
@@ -147,6 +135,7 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
                 super.onScrollStateChanged(recyclerView1, newState);
                 if(!recyclerView1.canScrollHorizontally(1)){
                     {
+                        if(movieRecyclerAdapterPlayingNow.getItemCount() < 100)
                         movieListViewModel.searchNextPagePlayingNow();
                     }
                 }
@@ -160,7 +149,7 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
     }
 
     private void configureSearchView(){
-        SearchView searchView = findViewById(R.id.search_view);
+        searchView = findViewById(R.id.search_view);
         SearchView.OnQueryTextListener onQuery = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -171,7 +160,7 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
                 playingNow.setVisibility(View.GONE);
                 popularMovie.setVisibility(View.GONE);
                    return true;
-            };
+            }
 
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -188,21 +177,18 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
                     popularMovie.setVisibility(View.GONE);
                     return true;
                 }
-            };
+            }
         };
 
         searchView.setOnQueryTextListener(onQuery);
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                recyclerView.setVisibility(View.VISIBLE);
-                recyclerViewSearch.setVisibility(View.GONE);
-                recyclerViewPlayingNow.setVisibility(View.VISIBLE);
-                playingNow.setVisibility(View.VISIBLE);
-                popularMovie.setVisibility(View.VISIBLE);
-                return true;
-            }
+        searchView.setOnCloseListener(() -> {
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerViewSearch.setVisibility(View.GONE);
+            recyclerViewPlayingNow.setVisibility(View.VISIBLE);
+            playingNow.setVisibility(View.VISIBLE);
+            popularMovie.setVisibility(View.VISIBLE);
+            return true;
         });
     }
 
@@ -216,7 +202,9 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
                 super.onScrollStateChanged(recyclerView1, newState);
                 if(!recyclerView1.canScrollHorizontally(1)){
                     {
-                            movieListViewModel.searchNextPage();
+                            if(movieRecyclerAdapter.getItemCount() < 50) {
+                                movieListViewModel.searchNextPage();
+                            }
                     }
                 }
             }
@@ -238,7 +226,10 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!recyclerView.canScrollHorizontally(1)){
                     {
-                        movieListViewModel.searchNextPagePopular();
+                        if(movieRecyclerAdapterPopular.getItemCount() < 100)
+                        {
+                            movieListViewModel.searchNextPagePopular();
+                        }
                     }
                 }
             }
@@ -256,44 +247,76 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
 
     //Observers for observing change
     private void ObserveChange(){
-        movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
-            @Override
-            public void onChanged(List<MovieModel> movieModels) {
-                movieRecyclerAdapter.setmMovies(movieModels);
-            }
-        });
+        movieListViewModel.getMovies().observe(this, movieModels -> movieRecyclerAdapter.setmMovies(movieModels));
     }
 
     //Observers for observing change
     private void ObservePopularChange(){
-        movieListViewModel.getPopularMovies().observe(this, new Observer<List<MovieModel>>() {
-            @Override
-            public void onChanged(List<MovieModel> movieModels) {
-                synchronized(this) {
-                    movieViewModelPopular.deleteAllNotes();
-                    for (MovieModel movieModel : movieModels) {
-                        movieViewModelPopular.insert(new MovieWrapperPopular(movieModel.getMovie_id(), movieModel));
+        movieListViewModel.getPopularMovies().observe(this, movieModels -> {
+            if(movieModels.size() < 100) {
+                movieViewModelPopular.deleteAllNotes();
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (MovieModel movieModel : movieModels) {
+                            if (movieViewModelPopular.searchMovie(movieModel.getMovie_id()) == null) {
+                                movieViewModelPopular.insert(new MovieWrapperPopular(movieModel.getMovie_id(), movieModel));
+                            }
+                        }
                     }
-                }
+                });
+                t.start();
                 movieRecyclerAdapterPopular.setmMovies(movieModels);
             }
         });
     }
 
     private void ObservePlayingNowChange(){
-        movieListViewModel.getPlayingNow().observe(this, new Observer<List<MovieModel>>() {
-            @Override
-            public void onChanged(List<MovieModel> movieModels) {
-
-                synchronized(this) {
-                    movieViewModelPlaying.deleteAllNotes();
-                    for (MovieModel movieModel : movieModels) {
-                        movieViewModelPlaying.insert(new MovieWrapperPlaying(movieModel.getMovie_id(), movieModel));
+        movieListViewModel.getPlayingNow().observe(this, movieModels -> {
+            if(movieModels.size() < 100) {
+                movieViewModelPlaying.deleteAllNotes();
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (MovieModel movieModel : movieModels) {
+                            if (movieViewModelPlaying.searchMovie(movieModel.getMovie_id()) == null) {
+                                movieViewModelPlaying.insert(new MovieWrapperPlaying(movieModel.getMovie_id(), movieModel));
+                            }
+                        }
                     }
-                }
+                });
+                t.start();
                 movieRecyclerAdapterPlayingNow.setmMovies(movieModels);
             }
         });
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerViewSearch.setVisibility(View.GONE);
+        recyclerViewPlayingNow.setVisibility(View.VISIBLE);
+        playingNow.setVisibility(View.VISIBLE);
+        popularMovie.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(searchView.getQuery().length() != 0) {
+            searchView.setQuery("", true);
+            searchView.clearFocus();
+            searchView.setIconified(true);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerViewSearch.setVisibility(View.GONE);
+            recyclerViewPlayingNow.setVisibility(View.VISIBLE);
+            playingNow.setVisibility(View.VISIBLE);
+            popularMovie.setVisibility(View.VISIBLE);
+            finish();
+
+        }
     }
 
     @Override
