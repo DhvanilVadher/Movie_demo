@@ -202,16 +202,6 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
             };
         };
 
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerView.setVisibility(View.GONE);
-                recyclerViewSearch.setVisibility(View.VISIBLE);
-                recyclerViewPlayingNow.setVisibility(View.GONE);
-                playingNow.setVisibility(View.GONE);
-                popularMovie.setVisibility(View.GONE);
-            }
-        });
         searchView.setOnQueryTextListener(onQuery);
 
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -230,7 +220,7 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
     private void ConfigureRecyclerView(){
         movieRecyclerAdapter = new MovieRecyclerView(this);
         recyclerViewSearch.setAdapter(movieRecyclerAdapter);
-        recyclerViewSearch.setLayoutManager(new GridLayoutManager(this,3));
+        recyclerViewSearch.setLayoutManager(new GridLayoutManager(this,2));
         recyclerViewSearch.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView1, int newState) {

@@ -43,9 +43,12 @@ public class MovieRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         ((MovieViewHolder)holder).title.setText(mMovies.get(position).getTitle());
         ((MovieViewHolder)holder).ratingBar.setRating(mMovies.get(position).getVote_average()/2);
+
+        RequestOptions myOptions = new RequestOptions().override(200,400);
         Glide.with(holder.itemView.getContext())
                 .load(Credentials.FIXED_IMAGE_URL+mMovies.get(position).getPoster_path())
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                .apply(myOptions)
                 .into(((MovieViewHolder) holder).imageView);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
