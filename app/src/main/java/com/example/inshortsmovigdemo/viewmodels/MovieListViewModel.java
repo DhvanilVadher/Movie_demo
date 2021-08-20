@@ -1,6 +1,7 @@
 package com.example.inshortsmovigdemo.viewmodels;
 
 import android.text.method.MovementMethod;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,14 +12,19 @@ import com.example.inshortsmovigdemo.repositories.MovieRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class MovieListViewModel extends ViewModel {
     //SubClass of Live data (mutable)
 
     //Live Data is inside Repository
 
+
     private MovieRepository movieRepository;
 
+    @Inject
     public MovieListViewModel() {
+        Log.v("aaa","viewModel working");
         movieRepository = MovieRepository.getInstance();
     }
 

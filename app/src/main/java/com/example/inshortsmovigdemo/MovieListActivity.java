@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,13 +16,15 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
 import com.example.inshortsmovigdemo.adapters.MovieRecyclerView;
 import com.example.inshortsmovigdemo.adapters.OnMovieListener;
+import com.example.inshortsmovigdemo.depedency.AuthViewModel;
+import com.example.inshortsmovigdemo.depedency.ViewModelProviderFactory;
 import com.example.inshortsmovigdemo.models.MovieModel;
 import com.example.inshortsmovigdemo.models.MovieWrapperPlaying;
 import com.example.inshortsmovigdemo.models.MovieWrapperPopular;
@@ -32,18 +35,27 @@ import com.example.inshortsmovigdemo.viewmodels.MovieViewModelPopular;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 
-public class MovieListActivity extends AppCompatActivity implements OnMovieListener {
+import dagger.android.support.DaggerAppCompatActivity;
+
+
+public class MovieListActivity extends DaggerAppCompatActivity implements OnMovieListener {
 
     private RecyclerView recyclerView,recyclerViewSearch,recyclerViewPlayingNow;
     private MovieRecyclerView movieRecyclerAdapter,movieRecyclerAdapterPopular,movieRecyclerAdapterPlayingNow;
     private TextView playingNow,popularMovie;
     private Button SavedMoviesBtn;
 
+    private static  final String TAG = "ListActivity";
+
+
     //ViewModel
-    private MovieListViewModel movieListViewModel;
-    private MovieViewModelPopular movieViewModelPopular;
-    private MovieViewModelPlaying movieViewModelPlaying;
+
+    MovieListViewModel movieListViewModel;
+
+    MovieViewModelPopular movieViewModelPopular;
+    MovieViewModelPlaying movieViewModelPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
