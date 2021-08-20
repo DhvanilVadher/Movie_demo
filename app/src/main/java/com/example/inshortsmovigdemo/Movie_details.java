@@ -122,4 +122,10 @@ import java.util.List;
             ratingBar.setRating(movieModel.getVote_average()/2);
         }
      }
+
+     @Override
+     public void onBackPressed() {
+         super.onBackPressed();
+         finish();
+     }
  }

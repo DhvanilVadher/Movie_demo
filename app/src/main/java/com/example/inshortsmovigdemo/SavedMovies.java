@@ -48,4 +48,10 @@ public class SavedMovies extends AppCompatActivity {
                 }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

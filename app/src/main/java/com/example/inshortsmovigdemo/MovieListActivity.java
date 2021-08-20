@@ -98,17 +98,6 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        recyclerView.setVisibility(View.VISIBLE);
-        recyclerViewSearch.setVisibility(View.GONE);
-        recyclerViewPlayingNow.setVisibility(View.VISIBLE);
-        playingNow.setVisibility(View.VISIBLE);
-        popularMovie.setVisibility(View.VISIBLE);
-    }
-
-
     private void OfflineObserver() {
         movieViewModelPopular.getAllMovies().observe(this, new Observer<List<MovieWrapperPopular>>() {
             @Override
