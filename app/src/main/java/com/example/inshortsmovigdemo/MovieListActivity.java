@@ -40,7 +40,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerAppCompatActivity;
 
 
-public class MovieListActivity extends DaggerAppCompatActivity implements OnMovieListener {
+public class MovieListActivity extends AppCompatActivity implements OnMovieListener {
 
     private RecyclerView recyclerView,recyclerViewSearch,recyclerViewPlayingNow;
     private MovieRecyclerView movieRecyclerAdapter,movieRecyclerAdapterPopular,movieRecyclerAdapterPlayingNow;
