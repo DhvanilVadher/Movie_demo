@@ -254,39 +254,30 @@ public class MovieListActivity extends AppCompatActivity implements OnMovieListe
     private void ObservePopularChange(){
         movieListViewModel.getPopularMovies().observe(this, movieModels -> {
             if(movieModels.size() < 100) {
-                movieViewModelPopular.deleteAllNotes();
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (MovieModel movieModel : movieModels) {
-                            if (movieViewModelPopular.searchMovie(movieModel.getMovie_id()) == null) {
-                                movieViewModelPopular.insert(new MovieWrapperPopular(movieModel.getMovie_id(), movieModel));
-                            }
-                        }
+                movieRecyclerAdapterPopular.setmMovies(movieModels);
+                Thread t = new Thread(() -> {
+                    movieViewModelPopular.deleteAllNotes();
+                    for (MovieModel movieModel : movieModels) {
+                        movieViewModelPopular.insert(new MovieWrapperPopular(movieModel.getMovie_id(), movieModel));
                     }
                 });
-                t.start();
-                movieRecyclerAdapterPopular.setmMovies(movieModels);
+                    t.start();
             }
         });
     }
 
     private void ObservePlayingNowChange(){
         movieListViewModel.getPlayingNow().observe(this, movieModels -> {
+
             if(movieModels.size() < 100) {
-                movieViewModelPlaying.deleteAllNotes();
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (MovieModel movieModel : movieModels) {
-                            if (movieViewModelPlaying.searchMovie(movieModel.getMovie_id()) == null) {
-                                movieViewModelPlaying.insert(new MovieWrapperPlaying(movieModel.getMovie_id(), movieModel));
-                            }
-                        }
+                movieRecyclerAdapterPlayingNow.setmMovies(movieModels);
+                Thread t = new Thread(() -> {
+                    movieViewModelPlaying.deleteAllNotes();
+                    for (MovieModel movieModel : movieModels) {
+                            movieViewModelPlaying.insert(new MovieWrapperPlaying(movieModel.getMovie_id(), movieModel));
                     }
                 });
                 t.start();
-                movieRecyclerAdapterPlayingNow.setmMovies(movieModels);
             }
         });
     }
